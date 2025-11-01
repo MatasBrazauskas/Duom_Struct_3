@@ -16,6 +16,27 @@ import java.util.Arrays;
  */
 public class HashMap<K, V> implements EvaluableMap<K, V> {
 
+    protected static class Node<K, V> {
+
+        protected K key;
+        protected V value;
+        protected Node<K, V> next;
+
+        protected Node() {
+        }
+
+        protected Node(K key, V value, Node<K, V> next) {
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+
+        @Override
+        public String toString() {
+            return key + "=" + value;
+        }
+    }
+
     public static final int DEFAULT_INITIAL_CAPACITY = 8;
     public static final float DEFAULT_LOAD_FACTOR = 0.75f;
     public static final HashManager.HashType DEFAULT_HASH_TYPE = HashManager.HashType.DIVISION;
@@ -31,19 +52,12 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
     //--------------------------------------------------------------------------
     //  Maišos lentelės įvertinimo parametrai
     //--------------------------------------------------------------------------
-    // Maksimalus suformuotos maišos lentelės grandinėlės ilgis
-    protected int maxChainSize = 0;
+    protected int maxChainSize = 0; // ll max ilgis????
     // Permaišymų kiekis
     protected int rehashesCounter = 0;
-    // Paskutinės patalpintos poros grandinėlės indeksas maišos lentelėje
-    protected int lastUpdatedChain = 0;
-    // Lentelės grandinėlių skaičius     
-    protected int chainsCounter = 0;
+    protected int lastUpdatedChain = 0; // koki ll paupdatinom paskutini
+    protected int chainsCounter = 0; // kiek yra ll masyve???
 
-    /* Klasėje sukurti 4 perkloti konstruktoriai, nustatantys atskirus maišos
-     * lentelės parametrus. Jei kuris nors parametras nėra nustatomas -
-     * priskiriama standartinė reikšmė.
-     */
     public HashMap() {
         this(DEFAULT_HASH_TYPE);
     }
@@ -74,27 +88,16 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         this.ht = ht;
     }
 
-    /**
-     * Patikrinama ar atvaizdis yra tuščias.
-     */
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**
-     * Grąžinamas atvaizdyje esančių porų kiekis.
-     *
-     * @return Grąžinamas atvaizdyje esančių porų kiekis.
-     */
     @Override
     public int size() {
         return size;
     }
 
-    /**
-     * Išvalomas atvaizdis.
-     */
     @Override
     public void clear() {
         Arrays.fill(table, null);
@@ -105,12 +108,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         chainsCounter = 0;
     }
 
-    /**
-     * Patikrinama ar pora egzistuoja atvaizdyje.
-     *
-     * @param key raktas.
-     * @return Patikrinama ar pora egzistuoja atvaizdyje.
-     */
     @Override
     public boolean contains(K key) {
         if (key == null) {
@@ -120,13 +117,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return get(key) != null;
     }
 
-    /**
-     * Atvaizdis papildomas nauja pora.
-     *
-     * @param key   raktas,
-     * @param value reikšmė.
-     * @return Atvaizdis papildomas nauja pora.
-     */
     @Override
     public V put(K key, V value) {
         if (key == null || value == null) {
@@ -138,6 +128,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         }
 
         Node<K, V> node = getInChain(key, table[index]);
+        //krc to nera ll tai prededame i prieky
         if (node == null) {
             table[index] = new Node<>(key, value, table[index]);
             size++;
@@ -148,6 +139,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
                 lastUpdatedChain = index;
             }
         } else {
+            // jis yra ll tai update that bitch
             node.value = value;
             lastUpdatedChain = index;
         }
@@ -155,12 +147,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return value;
     }
 
-    /**
-     * Grąžinama atvaizdžio poros reikšmė.
-     *
-     * @param key raktas.
-     * @return Grąžinama atvaizdžio poros reikšmė.
-     */
     @Override
     public V get(K key) {
         if (key == null) {
@@ -172,22 +158,49 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return node == null ? null : node.value;
     }
 
-    /**
-     * Pora pašalinama iš atvaizdžio.
-     *
-     * @param key Pora pašalinama iš atvaizdžio.
-     * @return key raktas.
-     */
-
     //TODO reikia realizuoti
     @Override
     public V remove(K key) {
+        if(key == null)
+        {
+            throw new IllegalArgumentException("Key is null in remove(K key)");
+        }
+
+        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        var node = table[index];//getInChain(key, table[index]);
+
+        if(node == null){
+            throw new IllegalArgumentException("Remove rakto nera");
+        }
+
+        Node<K,V> prev = null;
+        var curr = table[index];
+
+        while(curr != null){
+            var oldVal = curr.value;
+            if(curr.equals(node)){
+
+                if(prev == null){
+                    table[index] = curr.next;
+                }else {
+                    prev.next = curr.next;
+                }
+
+                size--;
+                return oldVal;
+            }
+
+            prev = curr;
+            curr = curr.next;
+        }
+
+        if(curr == null){
+            throw new IllegalArgumentException("Remove rakto nera Linked List");
+        }
+
         throw new UnsupportedOperationException("Studentams reikia realizuoti remove(K key)");
     }
 
-    /**
-     * Permaišymas
-     */
     private void rehash() {
         HashMap<K, V> newMap = new HashMap<>(table.length * 2, loadFactor, ht);
         for (int i = 0; i < table.length; i++) {
@@ -203,13 +216,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         rehashesCounter++;
     }
 
-    /**
-     * Paieška vienoje grandinėlėje
-     *
-     * @param key
-     * @param node
-     * @return
-     */
     private Node<K, V> getInChain(K key, Node<K, V> node) {
         if (key == null) {
             throw new IllegalArgumentException("Key is null in getInChain(K key, Node node)");
@@ -240,85 +246,77 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
 
     //TODO implement
     public boolean replace(K key, V oldValue, V newValue) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti replace(K key,  V oldValue, V newValue)");
+
+        if(key == null || oldValue == null || newValue == null){
+            throw new IllegalArgumentException("Raktas, sena arba nauja verte yra nulines asile!!!");
+        }
+
+        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        var node = getInChain(key, table[index]);
+
+        if (node == null) {
+            throw new IllegalArgumentException("Nera ll, nera ka replasinti");
+        }
+
+        Node<K, V> prev = null;
+        var curr = table[index];
+
+        while(curr != null){
+
+            if(curr.key.equals(key) && curr.value.equals(oldValue)){
+                curr.value = newValue;
+                return true;
+            }
+
+            prev = curr;
+            curr = curr.next;
+        }
+
+        return false;
     }
 
     //TODO implement
+    // nera kad cia tiesiog O(n) nes reikia kiekviena masyvo elementa patikrinti ar nera elementu ll
     public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti containsValue(Object value)");
+
+        for(Node<K,V> node : table){
+            if (node != null) {
+                var curr = node;
+
+                while(curr != null){
+                    if(curr.value.equals(value)){
+                        return true;
+                    }
+                    curr = curr.next;
+                }
+            }
+        }
+
+        return false;
     }
 
-    /**
-     * Grąžina maksimalų grandinėlės ilgį.
-     *
-     * @return Maksimalus grandinėlės ilgis.
-     */
     @Override
     public int getMaxChainSize() {
         return maxChainSize;
     }
 
-    /**
-     * Grąžina formuojant maišos lentelę įvykusių permaišymų kiekį.
-     *
-     * @return Permaišymų kiekis.
-     */
     @Override
     public int getRehashesCounter() {
         return rehashesCounter;
     }
 
-    /**
-     * Grąžina maišos lentelės talpą.
-     *
-     * @return Maišos lentelės talpa.
-     */
     @Override
     public int getTableCapacity() {
         return table.length;
     }
 
-    /**
-     * Grąžina paskutinės papildytos grandinėlės indeksą.
-     *
-     * @return Paskutinės papildytos grandinėlės indeksas.
-     */
     @Override
     public int getLastUpdated() {
         return lastUpdatedChain;
     }
 
-    /**
-     * Grąžina grandinėlių kiekį.
-     *
-     * @return Grandinėlių kiekis.
-     */
     @Override
     public int getNumberOfOccupied() {
         return chainsCounter;
-    }
-
-    protected static class Node<K, V> {
-
-        // Raktas        
-        protected K key;
-        // Reikšmė
-        protected V value;
-        // Rodyklė į sekantį grandinėlės mazgą
-        protected Node<K, V> next;
-
-        protected Node() {
-        }
-
-        protected Node(K key, V value, Node<K, V> next) {
-            this.key = key;
-            this.value = value;
-            this.next = next;
-        }
-
-        @Override
-        public String toString() {
-            return key + "=" + value;
-        }
     }
 }

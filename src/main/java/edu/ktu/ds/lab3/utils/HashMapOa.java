@@ -15,6 +15,25 @@ import java.util.stream.Collectors;
  */
 public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
+    protected static class Entry<K, V> {
+
+        protected K key;
+        protected V value;
+
+        protected Entry() {
+        }
+
+        protected Entry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return key + "=" + value;
+        }
+    }
+
     public enum OpenAddressingType {
 
         LINEAR,
@@ -27,20 +46,15 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     public static final HashManager.HashType DEFAULT_HASH_TYPE = HashManager.HashType.DIVISION;
     public static final OpenAddressingType DEFAULT_OPEN_ADDRESSING_TYPE = OpenAddressingType.LINEAR;
 
-    // Maišos lentelė
     protected Entry<K, V>[] table;
-    // Lentelėje esančių raktas-reikšmė porų kiekis
     protected int size = 0;
-    // Apkrovimo faktorius
     protected float loadFactor;
     // Maišos metodas
     protected HashManager.HashType ht;
     //--------------------------------------------------------------------------
     //  Maišos lentelės įvertinimo parametrai
     //--------------------------------------------------------------------------
-    // Permaišymų kiekis
     protected int rehashesCounter = 0;
-    // Paskutinio papildyto masyvo elemento indeksas maišos lentelėje
     protected int lastUpdated = 0;
     // Lentelėje užimtų elementų skaičius
     protected int numberOfOccupied = 0;
@@ -79,27 +93,16 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         this.oaType = oaType;
     }
 
-    /**
-     * Patikrinama ar atvaizdis yra tuščias.
-     */
     @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**
-     * Grąžinamas atvaizdyje esančių porų kiekis.
-     *
-     * @return Grąžinamas atvaizdyje esančių porų kiekis.
-     */
     @Override
     public int size() {
         return size;
     }
 
-    /**
-     * Išvalomas atvaizdis.
-     */
     @Override
     public void clear() {
         Arrays.fill(table, null);
@@ -216,47 +219,27 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         return index;
     }
 
-    /**
-     * Grąžina formuojant maišos lentelę įvykusių permaišymų kiekį.
-     *
-     * @return Permaišymų kiekis.
-     */
     @Override
     public int getRehashesCounter() {
         return rehashesCounter;
     }
 
-    /**
-     * Grąžina maišos lentelės talpą.
-     *
-     * @return Maišos lentelės talpa.
-     */
     @Override
     public int getTableCapacity() {
         return table.length;
     }
 
-    /**
-     * Grąžina paskutinio papildyto maišos lentelės masyvo elemento indeksą.
-     *
-     * @return Paskutinio papildyto maišos lentelės masyvo elemento indeksą.
-     */
     @Override
     public int getLastUpdated() {
         return lastUpdated;
     }
 
-    /**
-     * Grąžina užimtų maišos lentelės masyvo elementų kiekį.
-     *
-     * @return Užimtų maišos lentelės masyvo elementų kiekis
-     */
-    //TODO implement
     @Override
     public int getNumberOfOccupied() {
         return numberOfOccupied;
     }
 
+    //TODO implement
     public boolean replace(K key, V oldValue, V newValue) {
         throw new UnsupportedOperationException("Studentams reikia realizuoti replace(K key,  V oldValue, V newValue)");
     }
@@ -264,26 +247,5 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     //TODO implement
     public boolean containsValue(Object value) {
         throw new UnsupportedOperationException("Studentams reikia realizuoti containsValue(Object value)");
-    }
-
-    protected static class Entry<K, V> {
-
-        // Raktas
-        protected K key;
-        // Reikšmė
-        protected V value;
-
-        protected Entry() {
-        }
-
-        protected Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return key + "=" + value;
-        }
     }
 }
