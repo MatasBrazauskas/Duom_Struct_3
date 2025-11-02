@@ -49,7 +49,6 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     protected Entry<K, V>[] table;
     protected int size = 0;
     protected float loadFactor;
-    // Maišos metodas
     protected HashManager.HashType ht;
     //--------------------------------------------------------------------------
     //  Maišos lentelės įvertinimo parametrai
@@ -164,10 +163,71 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         return null;
     }
 
-    //TODO implement
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti remove(K key)");
+        if(key == null){
+            throw new IllegalArgumentException("Key is null in remove(K key)");
+        }
+
+        int index = HashManager.hash(key.hashCode(), table.length, ht);
+
+        var curr = table[index];
+
+        while(curr != null){
+            if(curr != DELETED && curr.key.equals(key)){
+                table[index] = DELETED;
+                size--;
+                return curr.value;
+            }
+
+            index = calculatePosition(index, 0, key);
+            curr = table[index];
+        }
+
+        throw new IllegalArgumentException("");
+    }
+
+    public boolean replace(K key, V oldValue, V newValue) {
+
+        if(key == null || oldValue == null || newValue == null){
+            throw new IllegalArgumentException("Key, oldValue or newValue is null in replace(K key,  V oldValue, V newValue)");
+        }
+
+        int index = HashManager.hash(key.hashCode(), table.length, ht);
+
+        var curr = table[index];
+
+        while(curr != null){
+            if(curr != DELETED && curr.key.equals(key)){
+                if(curr.value.equals(oldValue)){
+                    table[index].value = newValue;
+                    lastUpdated = index;
+                    return true;
+                }
+                return false;
+            }
+            index = calculatePosition(index, 0, key);
+            curr = table[index];
+        }
+
+        return false;
+    }
+
+    public boolean containsValue(Object value) {
+
+        if(value == null){
+            throw new IllegalArgumentException("Value is null in containsValue(Object value)");
+        }
+
+        for(var i = 0; i < table.length; i++){
+            var entry = table[i];
+
+            if(entry != null && entry != DELETED && entry.value.equals(value)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -237,15 +297,5 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     @Override
     public int getNumberOfOccupied() {
         return numberOfOccupied;
-    }
-
-    //TODO implement
-    public boolean replace(K key, V oldValue, V newValue) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti replace(K key,  V oldValue, V newValue)");
-    }
-
-    //TODO implement
-    public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException("Studentams reikia realizuoti containsValue(Object value)");
     }
 }

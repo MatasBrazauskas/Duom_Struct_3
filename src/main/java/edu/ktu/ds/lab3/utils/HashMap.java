@@ -88,6 +88,10 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         this.ht = ht;
     }
 
+    public int hash(int hashCode, int tableSize, HashManager.HashType ht){
+        return HashManager.hash(hashCode, tableSize, ht);
+    }
+
     @Override
     public boolean isEmpty() {
         return size == 0;
@@ -122,7 +126,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         if (key == null || value == null) {
             throw new IllegalArgumentException("Key or value is null in put(K key, V value)");
         }
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);//;HashManager.hash(key.hashCode(), table.length, ht);
         if (table[index] == null) {
             chainsCounter++;
         }
@@ -153,7 +157,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key is null in get(K key)");
         }
 
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
         Node<K, V> node = getInChain(key, table[index]);
         return node == null ? null : node.value;
     }
@@ -166,19 +170,14 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key is null in remove(K key)");
         }
 
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
-        var node = table[index];//getInChain(key, table[index]);
-
-        if(node == null){
-            throw new IllegalArgumentException("Remove rakto nera");
-        }
+        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
 
         Node<K,V> prev = null;
         var curr = table[index];
 
         while(curr != null){
             var oldVal = curr.value;
-            if(curr.equals(node)){
+            if(curr.key.equals(key)){
 
                 if(prev == null){
                     table[index] = curr.next;
@@ -194,11 +193,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             curr = curr.next;
         }
 
-        if(curr == null){
-            throw new IllegalArgumentException("Remove rakto nera Linked List");
-        }
-
-        throw new UnsupportedOperationException("Studentams reikia realizuoti remove(K key)");
+        throw new IllegalArgumentException("Remove rakto nera Linked List");
     }
 
     private void rehash() {
@@ -231,7 +226,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return null;
     }
 
-    @Override
+    /*@Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         for (Node<K, V> node : table) {
@@ -242,52 +237,58 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             }
         }
         return result.toString();
+    }*/
+
+    @Override
+    public String toString(){
+        var sb = new StringBuilder();
+
+        for(Node<K,V> node : table){
+            if (node != null) {
+
+                var llsb = new StringBuilder();
+
+                sb.append("[" + node.key + "] = ");
+
+                for(var i = node; i != null; i = i.next){
+                    llsb.append("( " + i.key + ":" + i.value + " ) -> ");
+                }
+
+                sb.append(llsb.toString() + "null\n");
+            }
+        }
+        return sb.toString();
     }
 
-    //TODO implement
     public boolean replace(K key, V oldValue, V newValue) {
 
         if(key == null || oldValue == null || newValue == null){
             throw new IllegalArgumentException("Raktas, sena arba nauja verte yra nulines asile!!!");
         }
 
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
-        var node = getInChain(key, table[index]);
+        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
 
-        if (node == null) {
-            throw new IllegalArgumentException("Nera ll, nera ka replasinti");
-        }
-
-        Node<K, V> prev = null;
-        var curr = table[index];
-
-        while(curr != null){
-
-            if(curr.key.equals(key) && curr.value.equals(oldValue)){
-                curr.value = newValue;
-                return true;
+        for(var i = table[index]; i != null; i = i.next){
+            if(i.key.equals(key)){
+                if(i.value.equals(oldValue)){
+                    i.value = newValue;
+                    return true;
+                }
+                return false;
             }
-
-            prev = curr;
-            curr = curr.next;
         }
-
         return false;
     }
 
-    //TODO implement
-    // nera kad cia tiesiog O(n) nes reikia kiekviena masyvo elementa patikrinti ar nera elementu ll
+    // TODO nera kad cia tiesiog O(n) nes reikia kiekviena masyvo elementa patikrinti ar nera elementu ll
     public boolean containsValue(Object value) {
 
         for(Node<K,V> node : table){
             if (node != null) {
-                var curr = node;
-
-                while(curr != null){
-                    if(curr.value.equals(value)){
+                for(var i = node; i != null; i = i.next){
+                    if(i.value.equals(value)){
                         return true;
                     }
-                    curr = curr.next;
                 }
             }
         }
