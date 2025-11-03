@@ -2,11 +2,9 @@ package edu.ktu.ds.lab3.demo;
 
 import edu.ktu.ds.lab3.utils.HashMap;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Random;
 
 public class HashMapTestsLL
 {
@@ -50,14 +48,14 @@ public class HashMapTestsLL
 
     @Test
     public void removeColOnEmpty(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
         assertThrows(IllegalArgumentException.class, () -> colMap.remove(1));
         System.out.println("Map\n" + colMap.toString());
     }
 
     @Test
     public void removeColThenNotFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -69,7 +67,7 @@ public class HashMapTestsLL
 
     @Test
     public void removeColThenFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -104,7 +102,7 @@ public class HashMapTestsLL
 
     @Test
     public void containsColNull(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -116,7 +114,7 @@ public class HashMapTestsLL
 
     @Test
     public void containsColNotFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -128,7 +126,7 @@ public class HashMapTestsLL
 
     @Test
     public void containsColFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -140,7 +138,7 @@ public class HashMapTestsLL
 
     @Test
     public void replaceNotFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);
@@ -152,7 +150,7 @@ public class HashMapTestsLL
 
     @Test
     public void replaceFound(){
-        var colMap = new HashMapCollisions<Integer, Integer>();
+        var colMap = new HashMapLLCollisions<Integer, Integer>();
 
         for(int i = 0; i < 5; i++){
             colMap.put(i, i * 2);

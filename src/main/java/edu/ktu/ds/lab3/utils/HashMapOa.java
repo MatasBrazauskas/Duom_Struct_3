@@ -85,6 +85,10 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         this.oaType = oaType;
     }
 
+    public int hash(int hashCode, int tableSize, HashManager.HashType ht){
+        return HashManager.hash(hashCode, tableSize, ht);
+    }
+
     @Override
     public boolean isEmpty() {
         return size == 0;
@@ -162,7 +166,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key is null in remove(K key)");
         }
 
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
 
         int probCount = 0;
         int position = index;
@@ -187,7 +191,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key, oldValue or newValue is null in replace(K key,  V oldValue, V newValue)");
         }
 
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
 
         int probCount = 0;
         int position = index;
@@ -227,11 +231,17 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
     @Override
     public String toString() {
-        return Arrays.stream(table)
-                .filter(entry -> entry != null && !DELETED.equals(entry))
-                .map(Entry::toString + HashManager.hash(Entry::value::hashCode(), table.length, ht))
-                .collect(Collectors.joining(System.lineSeparator()));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < table.length; i++) {
+            var entry = table[i];
+            if (entry != null && entry != DELETED) {
+                int hashIndex = hash(entry.key.hashCode(), table.length, ht);
+                sb.append(String.format("[%d] %s (hash=%d)%n", i, entry, hashIndex));
+            }
+        }
+        return sb.toString();
     }
+
 
     private void rehash() {
         HashMapOa<K, V> newMap = new HashMapOa<>(table.length * 2, loadFactor, ht, oaType);
@@ -243,7 +253,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     }
 
     private int findPosition(K key, boolean stopAtDeleted) {
-        int index = HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
 
         int position = index;
         for (int i = 0; i < table.length; i++) {
