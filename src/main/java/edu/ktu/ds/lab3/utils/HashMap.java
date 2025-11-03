@@ -2,18 +2,6 @@ package edu.ktu.ds.lab3.utils;
 
 import java.util.Arrays;
 
-/**
- * Porų ("maping'ų") raktas-reikšmė objektų kolekcijos - atvaizdžio realizacija
- * maišos lentele, kolizijas sprendžiant atskirų grandinėlių (angl. separate
- * chaining) metodu. Neužmirškite, jei poros raktas - nuosavos klasės objektas,
- * pvz. klasės Car objektas, klasėje būtina perdengti metodus equals(Object o)
- * ir hashCode().
- *
- * @param <K> atvaizdžio raktas
- * @param <V> atvaizdžio reikšmė
- * @author darius.matulis@ktu.lt
- * @Užduotis Peržiūrėkite ir išsiaiškinkite pateiktus metodus.
- */
 public class HashMap<K, V> implements EvaluableMap<K, V> {
 
     protected static class Node<K, V> {
@@ -41,22 +29,16 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
     public static final float DEFAULT_LOAD_FACTOR = 0.75f;
     public static final HashManager.HashType DEFAULT_HASH_TYPE = HashManager.HashType.DIVISION;
 
-    // Maišos lentelė
     protected Node<K, V>[] table;
-    // Lentelėje esančių raktas-reikšmė porų kiekis
     protected int size = 0;
-    // Apkrovimo faktorius
     protected float loadFactor;
-    // Maišos metodas
     protected HashManager.HashType ht;
-    //--------------------------------------------------------------------------
-    //  Maišos lentelės įvertinimo parametrai
-    //--------------------------------------------------------------------------
+
+    //Kaip ji reikia apskaiciuti??????
     protected int maxChainSize = 0; // ll max ilgis????
-    // Permaišymų kiekis
     protected int rehashesCounter = 0;
-    protected int lastUpdatedChain = 0; // koki ll paupdatinom paskutini
-    protected int chainsCounter = 0; // kiek yra ll masyve???
+    protected int lastUpdatedChain = 0;
+    protected int chainsCounter = 0;
 
     public HashMap() {
         this(DEFAULT_HASH_TYPE);
@@ -132,7 +114,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         }
 
         Node<K, V> node = getInChain(key, table[index]);
-        //krc to nera ll tai prededame i prieky
         if (node == null) {
             table[index] = new Node<>(key, value, table[index]);
             size++;
@@ -143,7 +124,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
                 lastUpdatedChain = index;
             }
         } else {
-            // jis yra ll tai update that bitch
             node.value = value;
             lastUpdatedChain = index;
         }
@@ -162,7 +142,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return node == null ? null : node.value;
     }
 
-    //TODO reikia realizuoti
     @Override
     public V remove(K key) {
         if(key == null)
@@ -170,27 +149,28 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key is null in remove(K key)");
         }
 
-        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
 
-        Node<K,V> prev = null;
-        var curr = table[index];
+        for(Node<K,V> i = table[index], prev = null; i != null; prev = i, i = i.next){
 
-        while(curr != null){
-            var oldVal = curr.value;
-            if(curr.key.equals(key)){
+            var oldVal = i.value;
+
+            if(i.key.equals(key)){
 
                 if(prev == null){
-                    table[index] = curr.next;
+                    table[index] = i.next;
                 }else {
-                    prev.next = curr.next;
+                    prev.next = i.next;
                 }
 
+                if(table[index] == null){
+                    chainsCounter--;
+                }
+
+                lastUpdatedChain = index;
                 size--;
                 return oldVal;
             }
-
-            prev = curr;
-            curr = curr.next;
         }
 
         throw new IllegalArgumentException("Remove rakto nera Linked List");
@@ -226,19 +206,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return null;
     }
 
-    /*@Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (Node<K, V> node : table) {
-            if (node != null) {
-                for (Node<K, V> n = node; n != null; n = n.next) {
-                    result.append(n).append(System.lineSeparator());
-                }
-            }
-        }
-        return result.toString();
-    }*/
-
     @Override
     public String toString(){
         var sb = new StringBuilder();
@@ -272,6 +239,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             if(i.key.equals(key)){
                 if(i.value.equals(oldValue)){
                     i.value = newValue;
+                    lastUpdatedChain = index;
                     return true;
                 }
                 return false;
@@ -280,20 +248,28 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         return false;
     }
 
-    // TODO nera kad cia tiesiog O(n) nes reikia kiekviena masyvo elementa patikrinti ar nera elementu ll
+    //Tai reikia mazinti metodo greitaveika del klases kintamojo palaikymo?
     public boolean containsValue(Object value) {
 
+        if(value == null){
+            throw new IllegalArgumentException("Value is null in containsValue(Object value)");
+        }
+
+        boolean flag = false;
         for(Node<K,V> node : table){
             if (node != null) {
-                for(var i = node; i != null; i = i.next){
+                int count = 0;
+                for(var i = node; i != null; i = i.next, count++){
                     if(i.value.equals(value)){
-                        return true;
+                        flag = true;
+                        //return true;
                     }
                 }
+                maxChainSize = Math.max(count, maxChainSize);
             }
         }
 
-        return false;
+        return flag;
     }
 
     @Override

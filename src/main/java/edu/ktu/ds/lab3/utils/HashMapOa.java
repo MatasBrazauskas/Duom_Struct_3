@@ -10,18 +10,12 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/**
- * @author Darius
- */
 public class HashMapOa<K, V> implements EvaluableMap<K, V> {
-
     protected static class Entry<K, V> {
-
         protected K key;
         protected V value;
 
-        protected Entry() {
-        }
+        protected Entry() {}
 
         protected Entry(K key, V value) {
             this.key = key;
@@ -30,7 +24,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
         @Override
         public String toString() {
-            return key + "=" + value;
+            return "(" + key + "=" + value + ")";
         }
     }
 
@@ -47,12 +41,11 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     public static final OpenAddressingType DEFAULT_OPEN_ADDRESSING_TYPE = OpenAddressingType.LINEAR;
 
     protected Entry<K, V>[] table;
+    //Kam size jeigu yra number of occupied
     protected int size = 0;
     protected float loadFactor;
     protected HashManager.HashType ht;
-    //--------------------------------------------------------------------------
-    //  Maišos lentelės įvertinimo parametrai
-    //--------------------------------------------------------------------------
+
     protected int rehashesCounter = 0;
     protected int lastUpdated = 0;
     // Lentelėje užimtų elementų skaičius
@@ -171,17 +164,18 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
         int index = HashManager.hash(key.hashCode(), table.length, ht);
 
-        var curr = table[index];
+        int probCount = 0;
+        int position = index;
 
-        while(curr != null){
-            if(curr != DELETED && curr.key.equals(key)){
-                table[index] = DELETED;
-                size--;
-                return curr.value;
+        for(var curr = table[index]; curr != null; curr = table[position], probCount++){
+            if(curr != null && curr != DELETED && curr.key.equals(key)){
+                var removedItem = curr.value;
+                table[position] = DELETED;
+                numberOfOccupied--;
+                lastUpdated = position;
+                return removedItem;
             }
-
-            index = calculatePosition(index, 0, key);
-            curr = table[index];
+            position = calculatePosition(index, probCount, key);
         }
 
         throw new IllegalArgumentException("");
@@ -195,19 +189,20 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
         int index = HashManager.hash(key.hashCode(), table.length, ht);
 
-        var curr = table[index];
+        int probCount = 0;
+        int position = index;
 
-        while(curr != null){
-            if(curr != DELETED && curr.key.equals(key)){
+        for(var curr = table[index]; curr != null; curr = table[position], probCount++){
+
+            if(curr != null && curr != DELETED && curr.key.equals(key)){
                 if(curr.value.equals(oldValue)){
-                    table[index].value = newValue;
-                    lastUpdated = index;
+                    table[position].value = newValue;
+                    lastUpdated = position;
                     return true;
                 }
                 return false;
             }
-            index = calculatePosition(index, 0, key);
-            curr = table[index];
+            position = calculatePosition(index, probCount, key);
         }
 
         return false;
@@ -234,7 +229,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     public String toString() {
         return Arrays.stream(table)
                 .filter(entry -> entry != null && !DELETED.equals(entry))
-                .map(Entry::toString)
+                .map(Entry::toString + HashManager.hash(Entry::value::hashCode(), table.length, ht))
                 .collect(Collectors.joining(System.lineSeparator()));
     }
 

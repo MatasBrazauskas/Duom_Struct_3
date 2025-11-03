@@ -41,10 +41,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.HashMapTestOA.executor": "Run",
     "JUnit.HashMapTestsLL.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/matas/Repos/l3",
+    "last_opened_file_path": "/home/matas/Repos/Project",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -174,7 +175,9 @@
       <updated>1602953696498</updated>
       <workItem from="1761987560062" duration="4787000" />
       <workItem from="1761995227680" duration="1573000" />
-      <workItem from="1762083205383" duration="12448000" />
+      <workItem from="1762083205383" duration="13450000" />
+      <workItem from="1762109886664" duration="8000" />
+      <workItem from="1762162443866" duration="5379000" />
     </task>
     <servers />
   </component>
