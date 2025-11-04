@@ -70,7 +70,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         this.ht = ht;
     }
 
-    public int hash(int hashCode, int tableSize, HashManager.HashType ht){
+    public int hash(int hashCode, int tableSize, HashManager.HashType ht) {
         return HashManager.hash(hashCode, tableSize, ht);
     }
 
@@ -108,7 +108,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         if (key == null || value == null) {
             throw new IllegalArgumentException("Key or value is null in put(K key, V value)");
         }
-        int index = hash(key.hashCode(), table.length, ht);//;HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
         if (table[index] == null) {
             chainsCounter++;
         }
@@ -137,33 +137,32 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             throw new IllegalArgumentException("Key is null in get(K key)");
         }
 
-        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
         Node<K, V> node = getInChain(key, table[index]);
         return node == null ? null : node.value;
     }
 
     @Override
     public V remove(K key) {
-        if(key == null)
-        {
+        if (key == null) {
             throw new IllegalArgumentException("Key is null in remove(K key)");
         }
 
         int index = hash(key.hashCode(), table.length, ht);
 
-        for(Node<K,V> i = table[index], prev = null; i != null; prev = i, i = i.next){
+        for (Node<K, V> curr = table[index], prev = null; curr != null; prev = curr, curr = curr.next) {
 
-            var oldVal = i.value;
+            var oldVal = curr.value;
 
-            if(i.key.equals(key)){
+            if (curr.key.equals(key)) {
 
-                if(prev == null){
-                    table[index] = i.next;
-                }else {
-                    prev.next = i.next;
+                if (prev == null) {
+                    table[index] = curr.next;
+                } else {
+                    prev.next = curr.next;
                 }
 
-                if(table[index] == null){
+                if (table[index] == null) {
                     chainsCounter--;
                 }
 
@@ -198,7 +197,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         int chainSize = 0;
         for (Node<K, V> n = node; n != null; n = n.next) {
             chainSize++;
-            if ((n.key).equals(key)) {
+            if (n.key.equals(key)) {
                 return n;
             }
         }
@@ -207,17 +206,17 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         var sb = new StringBuilder();
 
-        for(Node<K,V> node : table){
+        for (Node<K, V> node : table) {
             if (node != null) {
 
                 var llsb = new StringBuilder();
 
                 sb.append("[" + node.key + "] = ");
 
-                for(var i = node; i != null; i = i.next){
+                for (var i = node; i != null; i = i.next) {
                     llsb.append("( " + i.key + ":" + i.value + " ) -> ");
                 }
 
@@ -228,39 +227,46 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
     }
 
     public boolean replace(K key, V oldValue, V newValue) {
-
-        if(key == null || oldValue == null || newValue == null){
+        if (key == null || oldValue == null || newValue == null) {
             throw new IllegalArgumentException("Raktas, sena arba nauja verte yra nulines asile!!!");
         }
 
-        int index = hash(key.hashCode(), table.length, ht);//HashManager.hash(key.hashCode(), table.length, ht);
+        int index = hash(key.hashCode(), table.length, ht);
+        var node = getInChain(key, table[index]);
 
-        for(var i = table[index]; i != null; i = i.next){
-            if(i.key.equals(key)){
-                if(i.value.equals(oldValue)){
-                    i.value = newValue;
-                    lastUpdatedChain = index;
-                    return true;
-                }
-                return false;
-            }
+        if(node != null && node.value.equals(oldValue)){
+            node.value = newValue;
+            lastUpdatedChain = index;
+            return true;
         }
+
         return false;
     }
 
-    //Tai reikia mazinti metodo greitaveika del klases kintamojo palaikymo?
     public boolean containsValue(Object value) {
-
-        if(value == null){
+        if (value == null) {
             throw new IllegalArgumentException("Value is null in containsValue(Object value)");
         }
 
-        boolean flag = false;
-        for(Node<K,V> node : table){
+        for(var node : table){
+            if(node != null){
+                for(var i = node; i != null; i = i.next){
+                    if(i.value.equals(value)){
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+
+        /*boolean flag = false;
+
+        for (Node<K, V> node : table) {
             if (node != null) {
                 int count = 0;
-                for(var i = node; i != null; i = i.next, count++){
-                    if(i.value.equals(value)){
+                for (var i = node; i != null; i = i.next, count++) {
+                    if (i.value.equals(value)) {
                         flag = true;
                         //return true;
                     }
@@ -269,7 +275,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
             }
         }
 
-        return flag;
+        return flag;*/
     }
 
     @Override
