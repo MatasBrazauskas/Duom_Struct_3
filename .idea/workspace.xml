@@ -39,19 +39,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;JUnit.HashMapTestOA.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.HashMapTestsLL.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/matas/Repos/L2&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.HashMapOaWithoutDeleteTests.executor": "Run",
+    "JUnit.HashMapTestOA.executor": "Run",
+    "JUnit.HashMapTestsLL.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "/home/matas/Repos/l3",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\BG\Downloads\Lab3_MaisosLenteles2021_1010\Lab3_MaisosLenteles_Draft\src\main\java\edu\ktu\ds\lab3" />
@@ -66,6 +67,7 @@
       <recent name="C:\Users\BG\Downloads\Lab3_MaisosLenteles_2021\Lab3_MaisosLenteles\diagrams" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="edu.ktu.ds.lab3.demo" />
       <recent name="edu.ktu.ds.lab3.gui" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -79,7 +81,7 @@
       <module name="Lab3_MaisosLenteles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.ktu.ds.lab3.demo.*" />
+          <option name="PATTERN" value="edu.ktu.ds.lab3.utils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -92,7 +94,7 @@
       <module name="Lab3_MaisosLenteles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.ktu.ds.lab3.demo.*" />
+          <option name="PATTERN" value="edu.ktu.ds.lab3.utils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -105,7 +107,7 @@
       <module name="Lab3_MaisosLenteles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.ktu.ds.lab3.demo.*" />
+          <option name="PATTERN" value="edu.ktu.ds.lab3.utils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -118,7 +120,7 @@
       <module name="Lab3_MaisosLenteles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.ktu.ds.lab3.demo.*" />
+          <option name="PATTERN" value="edu.ktu.ds.lab3.utils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -130,7 +132,7 @@
       <module name="Lab3_MaisosLenteles" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="edu.ktu.ds.lab3.demo.*" />
+          <option name="PATTERN" value="edu.ktu.ds.lab3.utils.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -181,6 +183,8 @@
       <workItem from="1762239635257" duration="58000" />
       <workItem from="1762240495454" duration="3955000" />
       <workItem from="1762261855820" duration="775000" />
+      <workItem from="1762846592493" duration="243000" />
+      <workItem from="1763109417762" duration="7333000" />
     </task>
     <servers />
   </component>

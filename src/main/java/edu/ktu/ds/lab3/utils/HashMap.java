@@ -34,8 +34,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
     protected float loadFactor;
     protected HashManager.HashType ht;
 
-    //Kaip ji reikia apskaiciuti??????
-    protected int maxChainSize = 0; // ll max ilgis????
+    protected int maxChainSize = 0;
     protected int rehashesCounter = 0;
     protected int lastUpdatedChain = 0;
     protected int chainsCounter = 0;
@@ -259,23 +258,6 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
         }
 
         return false;
-
-        /*boolean flag = false;
-
-        for (Node<K, V> node : table) {
-            if (node != null) {
-                int count = 0;
-                for (var i = node; i != null; i = i.next, count++) {
-                    if (i.value.equals(value)) {
-                        flag = true;
-                        //return true;
-                    }
-                }
-                maxChainSize = Math.max(count, maxChainSize);
-            }
-        }
-
-        return flag;*/
     }
 
     @Override

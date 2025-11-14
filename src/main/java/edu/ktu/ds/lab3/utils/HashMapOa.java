@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.ktu.ds.lab3.utils;
-
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -243,7 +237,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     }
 
 
-    private void rehash() {
+    protected void rehash() {
         HashMapOa<K, V> newMap = new HashMapOa<>(table.length * 2, loadFactor, ht, oaType);
         Arrays.stream(table).filter(Objects::nonNull).forEach(kvEntry -> newMap.put(kvEntry.key, kvEntry.value));
         table = newMap.table;
@@ -252,7 +246,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         rehashesCounter++;
     }
 
-    private int findPosition(K key, boolean stopAtDeleted) {
+    protected int findPosition(K key, boolean stopAtDeleted) {
         int index = hash(key.hashCode(), table.length, ht);
 
         int position = index;
@@ -272,7 +266,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
         return -1;
     }
 
-    private int calculatePosition(int index, int i, K key) {
+    protected int calculatePosition(int index, int i, K key) {
         switch (oaType) {
             case LINEAR:
                 return (index + i + 1) % table.length;
