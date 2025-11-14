@@ -1,6 +1,29 @@
 package edu.ktu.ds.lab3.utils;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class HashMapOaWithoutDelete<K, V> extends HashMapOa<K, V> {
+
+    public HashMapOaWithoutDelete(int initialCapacity, float loadFactor, HashManager.HashType ht, OpenAddressingType oaType) {
+        if (initialCapacity <= 0) {
+            throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+        }
+
+        if ((loadFactor <= 0.0) || (loadFactor > 1.0)) {
+            throw new IllegalArgumentException("Illegal load factor: " + loadFactor);
+        }
+
+        this.table = new Entry[initialCapacity];
+        this.loadFactor = loadFactor;
+        this.ht = ht;
+        this.oaType = oaType;
+    }
+
+    public HashMapOaWithoutDelete() {
+
+    }
+
     @Override
     public int hash(int hashCode, int tableSize, HashManager.HashType ht){
         return HashManager.hash(hashCode, tableSize, ht);
@@ -51,45 +74,61 @@ public class HashMapOaWithoutDelete<K, V> extends HashMapOa<K, V> {
 
     @Override
     public V remove(K key) {
+        //System.out.println("Remove called");
         if(key == null){
             throw new IllegalArgumentException("Key is null in remove(K key)");
         }
 
         int index = hash(key.hashCode(), table.length, ht);
+        //System.out.println(String.format("Hash index for %s is %d", key, index));
+        int findPosition = this.findPosition(key);
+        //System.out.println(String.format("Position for %s is %d", key, findPosition));
 
         int position = index;
+        int probCount = 0;
 
-        //for(var curr = table[position]; curr != null; curr = table[position]){
-        for(int i = 0; table[position] != null ; i++){
-            System.out.println(table[position] != null ? table[position].key : "null");
+        while(table[position] != null) {
+            var curr = table[position];
+            //System.out.println(String.format("Trying to remove %s from position %d", curr, position));
 
-            if(table[position] != null && table[position].key.equals(key)){
-                System.out.println(String.format("Removing %s from position %d", table[position], position));
-                var removedItem = table[position].value;
+            if(curr.key.equals(key)){
+                //System.out.println(String.format("Removing %s from position %d", curr, position));
+
+                var removedItem = curr.value;
                 numberOfOccupied--;
                 lastUpdated = position;
 
-                this.shift(index, position, i, key);
+                this.shift(index, position, probCount, key);
 
                 return removedItem;
             }
-            position = calculatePosition(index, i, key);
+            position = calculatePosition(index, probCount++, key);
         }
 
-        throw new IllegalArgumentException("");
+        throw new IllegalArgumentException("End gentelmen");
+    }
+
+    protected void rehash() {
+        HashMapOaWithoutDelete<K, V> newMap = new HashMapOaWithoutDelete<>(table.length * 2, loadFactor, ht, oaType);
+        Arrays.stream(table).filter(Objects::nonNull).forEach(kvEntry -> newMap.put(kvEntry.key, kvEntry.value));
+        table = newMap.table;
+        numberOfOccupied = newMap.numberOfOccupied;
+        lastUpdated = newMap.lastUpdated;
+        rehashesCounter++;
     }
 
     private void shift(int index, int position, int probCount, K key) {
-        System.out.println("Is it even called?");
+        //System.out.println("Is it even called?");
         int nextIndex = calculatePosition(index, probCount++, key);
 
         while(table[position] != null){
             table[position] = table[nextIndex];
-            table[nextIndex] = null;
 
             position = nextIndex;
             nextIndex = calculatePosition(index, probCount++, key);
         }
+
+        table[position] = null;
     }
 
     public boolean replace(K key, V oldValue, V newValue) {
@@ -143,10 +182,23 @@ public class HashMapOaWithoutDelete<K, V> extends HashMapOa<K, V> {
             var entry = table[i];
             if (entry != null) {
                 int hashIndex = hash(entry.key.hashCode(), table.length, ht);
-                sb.append(String.format("[%d] %s (hash=%d)%n", i, entry, hashIndex));
+                sb.append(String.format("[Arr index %d] %s (hash=%d)%n", i, entry, hashIndex));
             }
         }
         return sb.toString();
+    }
+
+    public void PrintTable(){
+        for(var i = 0; i < table.length; i++){
+            var entry = table[i];
+            if(entry != null){
+                System.out.println(String.format("[Arr index %d] %s", i, entry));
+            }
+            else {
+                System.out.println(String.format("[Arr index %d] is null", i));
+            }
+        }
+        System.out.println();
     }
 
     private int findPosition(K key) {

@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     protected static class Entry<K, V> {
-        protected K key;
-        protected V value;
+        public K key;
+        public V value;
 
         protected Entry() {}
 
@@ -18,7 +18,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
 
         @Override
         public String toString() {
-            return "(" + key + "=" + value + ")";
+            return "(Key " + key + "= Value" + value + ")";
         }
     }
 
@@ -34,7 +34,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     public static final HashManager.HashType DEFAULT_HASH_TYPE = HashManager.HashType.DIVISION;
     public static final OpenAddressingType DEFAULT_OPEN_ADDRESSING_TYPE = OpenAddressingType.LINEAR;
 
-    protected Entry<K, V>[] table;
+    public Entry<K, V>[] table;
     //Kam size jeigu yra number of occupied
     protected int size = 0;
     protected float loadFactor;
@@ -46,7 +46,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
     protected int numberOfOccupied = 0;
 
     private final Entry<K, V> DELETED = new Entry<>();
-    private final OpenAddressingType oaType;
+    protected OpenAddressingType oaType;
 
     public HashMapOa() {
         this(DEFAULT_HASH_TYPE);
@@ -230,7 +230,7 @@ public class HashMapOa<K, V> implements EvaluableMap<K, V> {
             var entry = table[i];
             if (entry != null && entry != DELETED) {
                 int hashIndex = hash(entry.key.hashCode(), table.length, ht);
-                sb.append(String.format("[%d] %s (hash=%d)%n", i, entry, hashIndex));
+                sb.append(String.format("[Arr index %d] %s (hash=%d)%n", i, entry, hashIndex));
             }
         }
         return sb.toString();

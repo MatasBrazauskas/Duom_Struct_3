@@ -184,7 +184,7 @@
       <workItem from="1762240495454" duration="3955000" />
       <workItem from="1762261855820" duration="775000" />
       <workItem from="1762846592493" duration="243000" />
-      <workItem from="1763109417762" duration="7333000" />
+      <workItem from="1763109417762" duration="11409000" />
     </task>
     <servers />
   </component>
@@ -201,6 +201,10 @@
           <line>32</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IllegalArgumentException" package="java.lang" />
+          <option name="timeStamp" value="13" />
+        </breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

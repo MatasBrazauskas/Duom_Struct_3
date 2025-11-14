@@ -81,6 +81,8 @@ public class HashMapOaWithoutDeleteTests
             colMap.put(i, i * 2);
         }
 
+        System.out.println("Map\n" + colMap.toString());
+
         assertThrows(IllegalArgumentException.class, () -> colMap.remove(-1));
         System.out.println("Map\n" + colMap.toString());
     }
@@ -89,22 +91,34 @@ public class HashMapOaWithoutDeleteTests
     public void removeColThenFound(){
         var colMap = new HashMapOaWithoutDeleteCollisions<Integer, Integer>();
 
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < 10; i++){
             colMap.put(i, i * 2);
         }
 
-        System.out.println("Map\n" + colMap.toString());
+        //System.out.println("Map\n" + colMap.toString());
+        colMap.PrintTable();
 
         assertEquals(2, colMap.remove(1));
-        System.out.println("Map\n" + colMap.toString());
         assertEquals(0, colMap.remove(0));
-        System.out.println("Map\n" + colMap.toString());
         assertThrows(IllegalArgumentException.class, () -> colMap.remove(0));
-        assertEquals(8, colMap.remove(4));
+        assertEquals(6, colMap.remove(3));
+
+
+        colMap.PrintTable();
         colMap.put(10, 20);
+        colMap.PrintTable();
         colMap.put(20, 40);
-        assertEquals(20, colMap.remove(10));
-        System.out.println("Map\n" + colMap.toString());
+        colMap.PrintTable();
+
+        for(int i = 0; i < 10; i++){
+            colMap.put(10 + i, 0);
+        }
+
+        //System.out.println("Map\n" + colMap.toString());
+        colMap.PrintTable();
+        assertEquals(40, colMap.remove(20));
+        colMap.PrintTable();
+        //System.out.println("Map\n" + colMap.toString());
     }
 
     @Test
