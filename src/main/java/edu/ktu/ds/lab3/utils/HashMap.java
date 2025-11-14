@@ -200,7 +200,7 @@ public class HashMap<K, V> implements EvaluableMap<K, V> {
                 return n;
             }
         }
-        maxChainSize = Math.max(maxChainSize, chainSize + 1);
+        maxChainSize = Math.max(maxChainSize, chainSize);
         return null;
     }
 

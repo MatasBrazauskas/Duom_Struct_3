@@ -89,7 +89,8 @@ public class HashMapOaWithoutDeleteTests
 
     @Test
     public void removeColThenFound(){
-        var colMap = new HashMapOaWithoutDeleteCollisions<Integer, Integer>();
+        var colMap = new HashMapOaWithoutDeleteCollisions<Integer, Integer>(false);
+        System.out.println("Map\n" + colMap.DEFAULT_OPEN_ADDRESSING_TYPE);
 
         for(int i = 0; i < 10; i++){
             colMap.put(i, i * 2);

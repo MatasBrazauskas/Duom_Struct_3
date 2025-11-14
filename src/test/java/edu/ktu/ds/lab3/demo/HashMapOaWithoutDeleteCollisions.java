@@ -26,6 +26,10 @@ public class HashMapOaWithoutDeleteCollisions<K, V> extends HashMapOaWithoutDele
 
     public HashMapOaWithoutDeleteCollisions() {}
 
+    public HashMapOaWithoutDeleteCollisions(boolean dummy) {
+        this.DEFAULT_OPEN_ADDRESSING_TYPE = OpenAddressingType.DOUBLE_HASHING;
+    }
+
     @Override
     public int hash(int hashCode, int tableSize, HashManager.HashType ht){
         return 1;

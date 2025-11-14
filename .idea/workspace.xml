@@ -41,6 +41,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Benchmark.executor": "Run",
+    "Application.OpenAddressingPutBenchmark.executor": "Run",
     "JUnit.HashMapOaWithoutDeleteTests.executor": "Run",
     "JUnit.HashMapTestOA.executor": "Run",
     "JUnit.HashMapTestsLL.executor": "Run",
@@ -184,7 +186,7 @@
       <workItem from="1762240495454" duration="3955000" />
       <workItem from="1762261855820" duration="775000" />
       <workItem from="1762846592493" duration="243000" />
-      <workItem from="1763109417762" duration="11409000" />
+      <workItem from="1763109417762" duration="21491000" />
     </task>
     <servers />
   </component>
