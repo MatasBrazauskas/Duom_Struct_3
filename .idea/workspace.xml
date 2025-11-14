@@ -52,7 +52,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+    "settings.editor.selected.configurable": "reference.settings.project.maven.repository.indices"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -186,7 +186,8 @@
       <workItem from="1762240495454" duration="3955000" />
       <workItem from="1762261855820" duration="775000" />
       <workItem from="1762846592493" duration="243000" />
-      <workItem from="1763109417762" duration="21491000" />
+      <workItem from="1763109417762" duration="21612000" />
+      <workItem from="1763145164336" duration="1619000" />
     </task>
     <servers />
   </component>
